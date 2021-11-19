@@ -1,40 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet} from "react-native";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert} from "react-native";
 import { Ionicons } from '@expo/vector-icons';
-//import { auth, db } from "../firebase/firebase";
+import { auth, db } from "../firebase/firebase";
 
 const RegisterScreen = ({ navigation }) => {
-    const [email, setEmail] = useState(null);
-    const [password, setPassword] = useState(null);
-    const [firstName, setFirstName] = useState(null);
-    const [lastName, setLastName] = useState(null);
-    const [isLoading, setLoading] = useState(null);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
 
-    // const register = ({props}) => {
-    //     auth.createUserWithEmailAndPassword(email, password)  
-    //     .then((userCredential) => {
-    //         const user = userCredential.user;
-    //             setLoading(true);
-    //             return db.collection("users").doc(user.uid).set({
-    //                 uid: user.uid,
-    //                 firstName: firstName,
-    //                 lastName: lastName,
-    //                 email: user.email,
-    //             }).then(() => {
-    //                 setLoading(false)
-    //                 props.navigation.navigate('LoginScreen');
-    //             }).catch(err =>{
-    //                 setLoading(false);
-    //                 alert(err);
-    //             });
-    //     })
-    // }
+    const register = () => {
+        auth.createUserWithEmailAndPassword(email, password)  
+        .then((userCredential) => {
+            const user = userCredential.user;
+                return db.collection("admin").doc(user.uid).set({
+                    uid: user.uid,
+                    name: name,
+                    email: user.email,
+                }).then(() => {
+                    alert('Admin successfully added');
+                }).catch(err =>{
+                    alert(err);
+                });
+        })
+    }
 
-    return isLoading ? (
-        <View style={styles.container}>
-            <Loading/>
-        </View>
-    ) : (
+    return (
         <View style={styles.container}>
             <View style={{
                      position: "absolute",
@@ -75,20 +65,11 @@ const RegisterScreen = ({ navigation }) => {
            </View>
            <View>
            <TextInput 
-               placeholder="First Name"
+               placeholder="Name"
                placeholderTextColor="#60594F"
                style={styles.textInput}    
-               value={firstName}
-               onChangeText={text => setFirstName(text)}  
-            ></TextInput>
-           </View>
-           <View>
-           <TextInput 
-               placeholder="Last Name"
-               placeholderTextColor="#60594F"
-               style={styles.textInput}    
-               value={lastName}
-               onChangeText={text => setLastName(text)}  
+               value={name}
+               onChangeText={text => setName(text)}  
             ></TextInput>
            </View>
            <TouchableOpacity style={styles.myButton} onPress={register}>
@@ -99,7 +80,7 @@ const RegisterScreen = ({ navigation }) => {
         <View style={{flexDirection: 'row', marginTop: 30}}>
             <Text style={styles.text, {fontSize: 14, color: '#ABB4BD'}}>Already have an account?</Text>
             <TouchableOpacity onPress={() => navigation.navigate('LoginScreen')}>
-                <Text style={{fontWeight: '600', color: '#7ec6d0', marginHorizontal: 5}}>log In Now</Text>
+                <Text style={{fontWeight: '600', color: '#255C69', marginHorizontal: 5}}>log In Now</Text>
             </TouchableOpacity>
         </View>
           
@@ -139,7 +120,7 @@ const styles = StyleSheet.create({
     },
 
     myButton: {
-        backgroundColor: '#7ec6d0',
+        backgroundColor: '#255C69',
         width: '85%',
         borderRadius: 30,
         fontSize: 16,

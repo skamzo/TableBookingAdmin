@@ -1,42 +1,43 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet} from "react-native";
-//import { auth, db } from "../firebase/firebase";
+import HomeScreen from "../screens/HomeScreen";
+import { auth, db } from "../firebase/firebase";
 
 const LoginScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    // const signIn = () => {
-    //     auth.signInWithEmailAndPassword(email, password)
-    //        .then(() => {
-    //         console.log('User logged-in successfully!')
-    //        })
+    const signIn = () => {
+        auth.signInWithEmailAndPassword(email, password)
+           .then(() => {
+            console.log('User logged-in successfully!')
+           })
            
-    //        .catch((error) => {
-    //             var errorCode = error.code;
-    //             var errorMessage = error.message;
-    //             alert(errorMessage)
-    //         })
-    // }
-    // useEffect(() => {
-    //     const unsubscribe = auth.onAuthStateChanged
-    //            (function (user) {
-    //             if (user) {
-    //                 navigation.replace('HomeScreen');
-    //               } else {
-    //                 navigation.canGoBack() &&
-    //                 navigation.popToTop();
-    //               }
-    //            });
+           .catch((error) => {
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                alert(errorMessage)
+            })
+    }
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged
+               (function (user) {
+                if (user) {
+                    navigation.replace('HomeScreen');
+                  } else {
+                    navigation.canGoBack() &&
+                    navigation.popToTop();
+                  }
+               });
 
-    //            return unsubscribe
-    // });
+               return unsubscribe
+    });
   
     return (
         <View style={styles.container}>
             <View >
                 <Text style={styles.title}>
-                   Table booking Restaurant
+                   Admin Login
                 </Text>
             </View>
            <View>
@@ -58,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
                secureTextEntry 
             ></TextInput>
            </View>
-           <TouchableOpacity style={styles.myButton}  >
+           <TouchableOpacity style={styles.myButton} onPress={signIn}  >
                    <Text style={styles.btnText}>Log In</Text>
             </TouchableOpacity>
             {/* style={styles.myButton} onPress={() => navigation.navigate('RegisterScreen')}> */}
@@ -66,7 +67,7 @@ const LoginScreen = ({ navigation }) => {
         <View style={{flexDirection: 'row', marginTop: 30}}>
             <Text style={styles.text, {fontSize: 14, color: '#ABB4BD'}}>Don't have an account?</Text>
             <TouchableOpacity onPress={() => navigation.navigate('RegisterScreen')}>
-                <Text style={{fontWeight: '600', color: '#7ec6d0', marginHorizontal: 5}}>Sign Up Now</Text>
+                <Text style={{fontWeight: '600', color: '#255C69', marginHorizontal: 5}}>Sign Up Now</Text>
             </TouchableOpacity>
         </View>
           
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     },
 
     title: {
-       color: 'cadetblue',
+       color: '#255C69',
        fontSize: 20,
        fontWeight: 'bold',
        justifyContent: 'space-between',
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     },
 
     myButton: {
-        backgroundColor: '#7ec6d0',
+        backgroundColor: '#255C69',
         width: '85%',
         borderRadius: 30,
         fontSize: 16,

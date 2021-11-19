@@ -1,30 +1,74 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, FlatList, StyleSheet, Image, TouchableOpacity, TextInput, Dimensions} from 'react-native';
 import { FontAwesome5 } from "@expo/vector-icons"
 import { Ionicons } from '@expo/vector-icons';
+import { db } from '../firebase/firebase';
+import moment from 'moment';
+import AdminModal from './AdminModal';
 
 const { width, height } = Dimensions.get('screen');
 
+
+
 const HomeScreen = ({navigation}) => {
 
-  const LineDivider = ({ lineStyle }) => {
-      return (
-        <View
-           style={{
-              height: 2,
-              width: '100%',
-              backgroundColor: '#8A8F9E',
-              ...lineStyle
-           }}
-        />
-      )
-  };
+  const [users, setUsers] = useState(null)
+  const [isModalVisible, setModalVisible] = useState(false);
 
-    return (
+  const getUsers = async () => {
+    const querySnap = await db.collection('bookings').get()
+    const allusers = querySnap.docs.map(docSnap=>docSnap.data())
+    console.log(allusers)
+    setUsers(allusers)
+}
+
+useEffect(() => {
+    getUsers()
+},[])
+
+
+const RenderCard = ({item}) => {
+  return (
+      <View>
+          <View style={styles.myList}>
+              <Text>
+                  {item.count}
+              </Text>
+              <Text>
+                  {/* {moment(item.date).format('MM DD YYYY, hh:mm a')} */}
+                  {/* {new Date(item.date.toDate()).toDateString()} */}
+                  {moment(item.date.toDate()).format('MM-DD-YYYY, hh:mm a')}
+              </Text> 
+          </View>
+      </View>
+  )
+}
+
+  return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#ECF0F6' }}>
-            <View style={styles.container}>   
-      
-         <View style={styles.bottomBar}>
+          <View style={styles.container}>   
+              <View>
+                 <Text style={{fontSize: 18, fontWeight: 'bold', textAlign: 'center', marginTop: 70}}>Customer Bookings</Text>
+              </View>
+              <View>
+              <FlatList
+                    data={users}
+                    renderItem={({item})=> {return <RenderCard item={item} />}}
+                    keyExtractor={(item) =>item.uid}                 
+              />
+              </View>
+              <View style={styles.myButton}>
+                {isModalVisible &&
+                <AdminModal
+                   isVisible={isModalVisible}
+                   onClose={() => setModalVisible(false)}
+                />
+               }
+              <TouchableOpacity onPress={() => setModalVisible(true)} >
+                   <Text style={styles.btnText}>Add</Text>
+            </TouchableOpacity>
+              </View>
+            <View style={styles.bottomBar}>
              <View style={styles.containerIcon}>
              <View>
                 <FontAwesome5 style= {{
@@ -58,11 +102,12 @@ export default HomeScreen;
 const styles = StyleSheet.create({
 
     container: {
-       flex: 1,
+      flex: 1,
        backgroundColor: '#ECF0F6',
-       justifyContent: 'center',
-       alignItems: "center",
-       marginTop: 55
+    },
+
+    myList: {
+      flexDirection: 'row',
     },
 
     inputContainer: {
@@ -110,11 +155,12 @@ const styles = StyleSheet.create({
     },
 
     bottomBar: {
-        height: height * 0.06,
+        height: height * 0.09,
         width: '100%',
         backgroundColor: '#255E69',
         borderTopLeftRadius: 50,
         borderTopRightRadius: 50,
+        marginTop: 112
     },
 
     containerIcon: {
@@ -134,13 +180,13 @@ const styles = StyleSheet.create({
     },
 
     myButton: {
-        width: 310,
+        width: 130,
         height: 50,
-        backgroundColor: '#ff9f4d',
-        borderRadius: 10,
+        backgroundColor: '#255C69',
+        borderRadius: 30,
         marginHorizontal: 50,
         marginLeft: 30,
-        marginTop: 15,
+        marginTop: 200,
     },
 
     btnText: {
@@ -149,7 +195,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         textAlign: "center",
         marginTop: 10,
-    }
+    },
 
   })
 

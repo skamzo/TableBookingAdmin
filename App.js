@@ -9,6 +9,9 @@ import React, {useEffect, useState} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { auth } from './firebase/firebase';
+import beef from './menu1/beef';
+import chicken from './menu1/chicken';
+import pork from './menu1/pork';
 
 const Stack = createNativeStackNavigator();
 
@@ -54,15 +57,19 @@ const App = () => {
     >
       {user?
       <>
-      <Stack.Screen name="HomeScreen"  >
+      <Stack.Screen options={{headerShown: false}} name="HomeScreen"  >
         {props => <HomeScreen {...props } user={user} />}
       </Stack.Screen>
       <Stack.Screen options={{headerShown: false}} name="ProfileScreen" component={ProfileScreen} />
+      <Stack.Screen options={{headerShown: false}} name="beef" component={beef} />
+      <Stack.Screen options={{headerShown: false}} name="chicken" component={chicken} />
+      <Stack.Screen options={{headerShown: false}} name="pork" component={pork} />
       </>
       :
       <>
       <Stack.Screen options={{headerShown: false}} name="LoginScreen" component={LoginScreen} />
       <Stack.Screen options={{headerShown: false}} name="RegisterScreen" component={RegisterScreen} />
+
       </>
       }
 

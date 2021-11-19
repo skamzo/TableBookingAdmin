@@ -1,19 +1,23 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button, Image, Alert, Dimensions } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button, Image, Alert, Dimensions, FlatList } from "react-native";
 import React, { useState, useCallback, useEffect, useLayoutEffect } from 'react';
 import { auth, db } from "../firebase/firebase";
 import { SimpleLineIcons } from '@expo/vector-icons';
 //import { Avatar } from 'react-native-elements';
+import UpdateModal from "./UpdateModal";
 import * as ImagePicker from 'expo-image-picker';
 
 const {height, width} = Dimensions.get('window');
 
 const ProfileScreen = ({navigation}) => {
+
+  
   const [messages, setMessages] = useState([]);
-  const [firstName, setFirstName] = useState('');
+  //const [firstName, setFirstName] = useState('');
   const [image, setImage] = useState('');
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [isModalVisible, setModalVisible] = useState(false);
 
     const signOut = () => {
              auth.signOut().then(() => {
@@ -23,6 +27,51 @@ const ProfileScreen = ({navigation}) => {
             // An error happened.
           });
     }
+
+    const [users, setUsers] = useState(null)
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [imageUrl, setImageUrl] = useState('');
+    const getUsers = async () => {
+        const uid = auth?.currentUser?.uid;
+        const querySnap = await db.collection('admin').where('uid','==', uid).get();
+        const allusers = querySnap.docs.map(docSnap=>docSnap.data())
+        console.log(allusers)
+        setUsers(allusers)
+    }
+
+    useEffect(() => {
+        getUsers()
+    },[])
+
+    const RenderCard = ({item}) => {
+      return (
+          <View style={{marginTop: 85}}>
+
+              <Image source={{uri:item.avatar}}/>
+              <View >
+              <Text style={{fontSize: 18,  margin: 9}}>
+                  <Text style={{fontWeight: 'bold', fontSize: 18}}>
+           Email:
+        </Text> {item.email}
+                  </Text>
+                  <Text style={{fontSize: 18, margin: 9}}>
+                  <Text style={{fontWeight: 'bold', fontSize: 18}}>
+           Restaurant Name:
+        </Text> {item.name}
+                  </Text>
+                  <Text style={{fontSize: 18, margin: 9}}>
+                  <Text style={{fontWeight: 'bold', fontSize: 18}}>
+              Image:    <Image style={styles.image} source={{uri: item.image}} value={image} style={{height: 100, width: 100}}/>
+                
+              </Text> 
+                  </Text>
+              </View>
+       
+          </View>
+      )
+}
+
 
     // const signOut = async () => {
     //     try {
@@ -59,22 +108,6 @@ const ProfileScreen = ({navigation}) => {
       }
     };
 
-    const AddHotel = () => {
-            const uid = auth?.currentUser?.uid;  
-            return db.collection('admin').doc(uid).update({
-            uid: uid,
-            email: email,
-            image: image,
-            description: description,
-             }).then(() => { 
-          Alert.alert('Hotel successfully added')
-        })
-      .catch((error) => {
-       const errorMessage = error.message;
-        alert(errorMessage)
-      });
-    }
-
     return (
       <View style={styles.container} >
                <View style={{marginTop: 35, alignSelf: 'flex-end', height:194}}>
@@ -93,26 +126,24 @@ const ProfileScreen = ({navigation}) => {
               {/* {image && <Image source={{ uri: image }} />} */}
               </TouchableOpacity>
 
-            <View style={styles.MainContainer}>
-            <TextInput
-              style={styles.TextInputStyleClass}
-              onChangeText={name => setName(name)}
-              value={name}
-              underlineColorAndroid="transparent"
-              placeholder={"Enter the hotel description here."}
-              placeholderTextColor={"#9E9E9E"}
-              numberOfLines={10}
-              multiline={true}
-            />
-          </View>
+              <FlatList
+                    style={styles.myFlatList}
+                    data={users}
+                    renderItem={({item})=> {return <RenderCard item={item} />}}
+                    keyExtractor={(item) =>item.uid}
+                />
 
-          <View style={styles.myButton}>   
-          <TouchableOpacity 
-              onPress={AddHotel}
-          >
-             <Text style={styles.btnText}>Add Hotel</Text>
+         <View style={styles.myButton}>
+         {isModalVisible &&
+                <UpdateModal
+                   isVisible={isModalVisible}
+                   onClose={() => setModalVisible(false)}
+                />
+               }   
+          <TouchableOpacity onPress={() => setModalVisible(true)} >
+             <Text style={styles.btnText}>Update Restaurant</Text>
           </TouchableOpacity>
-          </View>
+          </View>  
          </View>
        </View>  
  
@@ -169,7 +200,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#255C69',
       borderRadius: 40,
       marginHorizontal: 50,
-      marginTop: 37,
+      marginBottom: 37,
       alignSelf: 'center'
   },
 
@@ -192,7 +223,7 @@ const styles = StyleSheet.create({
 
   MainContainer :{
     flex:0,
-    paddingTop: (Platform.OS) === 'Android' ? 20 : 0,
+    // paddingTop: (Platform.OS) === 'Android' ? 20 : 0,
     justifyContent: 'center',
     margin:20,
     

@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, SafeAreaView, FlatList, StyleSheet, Image, TouchableOpacity, TextInput, Dimensions} from 'react-native';
 import { foodmenu } from '../screens/restaurants';
+import { db, auth } from '../firebase/firebase';
 
 const beef = () => {
+
+  const [users, setUsers] = useState(null);
+
+    const getMenu = async () => {
+        const uid = auth?.currentUser?.uid;
+        const querySnap = await db.collection('Menu2').where("uid", "==", uid).get()
+        const allusers = querySnap.docs.map(docSnap=>docSnap.data())
+        console.log(allusers)
+        setUsers(allusers)
+      }
+      
+      useEffect(() => {
+        getMenu()
+      },[])
 
     const HorizontalFoodCard = ({containerStyle, imageStyle, item}) => {
         return (
@@ -11,16 +26,17 @@ const beef = () => {
               style={{
                 flexDirection: 'row',
                 borderRadius: 15,
-                 backgroundColor: '#F2F2F2',
+                 backgroundColor: 'lightgrey',
                  ...containerStyle
               }}
           >
             <Image
-               source={item.image}
+               source={{uri: item.image}}
                style={imageStyle}
             />
             <View style={{flex: 1}}>
                 <Text style={{marginLeft: 10}}>{item.name}</Text>
+                <Text style={{marginLeft: 10}}>Price: R{item.price}</Text>
             </View>
           </TouchableOpacity>
         )
@@ -31,7 +47,7 @@ const beef = () => {
     <View style={styles.container}>
          <View style={styles.flatList}>
            <FlatList
-                data={foodmenu}
+                data={users}
                 keyExtractor={(item) => `${item.id}`}
                 showsVerticalScrollIndicator={false}
                 renderItem={({item, index}) => {
@@ -45,9 +61,9 @@ const beef = () => {
                            }}
                            imageStyle={{
                             alignItems: 'center',
-                              marginLeft: 10,
                               height: 100,
-                              width: 100
+                              width: 100,
+                              borderRadius: 10
                            }}
                            item={item}
                       />                     
@@ -65,7 +81,7 @@ export default beef
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#e4ac6f',
     alignItems: 'center',
     justifyContent: 'center',
   },

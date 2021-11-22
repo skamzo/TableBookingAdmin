@@ -43,7 +43,6 @@ useEffect(() => {
     getUsers()
 },[])
 
-
 // const getUser = async () => {
 //   const uid = auth?.currentUser?.uid;
 //   const querySnap = await db.collection('users').where("uid", "==", uid).get()
@@ -83,6 +82,15 @@ const RenderCard = ({item}) => {
                   Time:
               </Text> {moment(item.date.toDate()).format('HH:mm A')}
               </Text> 
+              {/* <View style={{marginHorizontal: 215, marginTop: -68}}>
+               <TouchableOpacity style={styles. myButton1} >
+                   <Text style={styles.btnText1}>Approve</Text>
+              </TouchableOpacity>
+             
+               <TouchableOpacity style={styles. myButton2} >
+                   <Text style={styles.btnText2}>Cancel</Text>
+              </TouchableOpacity>
+               </View> */}
             </View>
           </View>
      
@@ -206,7 +214,7 @@ const RenderCard = ({item}) => {
                 onPress={() => navigation.navigate('beef')}
              >
              <View style={{width: 95, height: 95, backgroundColor: 'lightgray', alignSelf: 'center', marginVertical: 5, borderRadius: 16, marginHorizontal: 10}}>
-             <Image source={require('../assets/steak.png')} resizeMode='contain' style={{ width: 95, height: 95 }} />
+             <Image source={require('../assets/cocktail.png')} resizeMode='contain' style={{ width: 95, height: 95 }} />
                  </View>
                 
              </TouchableOpacity>
@@ -226,7 +234,7 @@ const RenderCard = ({item}) => {
                onPress={() => navigation.navigate('pork')}
              >
              <View style={{width: 95, height: 95, backgroundColor: 'lightgray', alignSelf: 'center', marginVertical: 5, borderRadius: 16, marginHorizontal: 10}}>
-             <Image source={require('../assets/pork.png')} resizeMode='contain' style={{ width: 95, height: 95 }} />
+             <Image source={require('../assets/prawns.png')} resizeMode='contain' style={{ width: 95, height: 95 }} />
                  </View>
              
              </TouchableOpacity>
@@ -273,17 +281,19 @@ const RenderCard = ({item}) => {
              <View>
                 <FontAwesome5 style= {{
                     
-              }} name='home' size={20} color={'#fff'} />
+              }} name='home' size={23} color={'#fff'}
+              onPress={() => navigation.navigate('HomeScreen')}
+               />
              </View>
-             <View>
+             {/* <View>
                 <FontAwesome5 style= {{
              
               }} name='book' size={20} color={'#fff'} />
-             </View>
+             </View> */}
              <View>
                 <FontAwesome5 style= {{
               
-              }} name='user-alt' size={20} color={'#fff'}
+              }} name='user-alt' size={23} color={'#fff'}
                 onPress={() => navigation.navigate('ProfileScreen')}
               />
 
@@ -368,7 +378,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-around',
         marginTop: 20,
-        color: '#fff'
+        color: '#fff',
+        marginHorizontal: 30
     },
 
     title: {
@@ -398,6 +409,38 @@ const styles = StyleSheet.create({
         textAlign: "center",
         marginTop: 10,
     },
+
+    myButton1: {
+      width: 80,
+      height: 32,
+      backgroundColor: 'orange',
+      borderRadius: 30,   
+  },
+
+  btnText2: {
+      color: 'white',
+      fontSize: 15,
+      justifyContent: "center",
+      textAlign: "center",
+      marginTop: 6,
+  },
+
+  myButton2: {
+    width: 80,
+    height: 32,
+    backgroundColor: 'maroon',
+    borderRadius: 30,
+    margin: 5
+},
+
+btnText1: {
+    color: 'white',
+    fontSize: 15,
+    justifyContent: "center",
+    textAlign: "center",
+    marginTop: 6,
+},
+
 
     flatList: {
       marginBottom: -100,

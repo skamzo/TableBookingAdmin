@@ -1,16 +1,18 @@
 import React from 'react';
-import { View, Text, SafeAreaView, StyleSheet, Image, Picker, TouchableOpacity, Button, TextInput, Modal, Dimensions} from 'react-native';
+import { View, Text, SafeAreaView, StyleSheet, Image, Picker, TouchableOpacity, Button, TextInput, Modal, Dimensions, Alert} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { db, auth } from '../firebase/firebase';
 
-const AdminModal = ({isVisible, onClose}) => {
+const UpdateUserProfile = ({isVisible, onClose}) => {
 
     const [isModalVisible, setModalVisible] = React.useState(isVisible);
     const [image, setImage] = React.useState(null);
     const [selectedValue, setSelectedValue] = React.useState("Beverage");
+    const [email, setEmail] = React.useState('');
     const [name, setName] = React.useState('');
     const [price, setPrice] = React.useState('');
+    const [description, setDescription] = React.useState('');
     
     React.useEffect(() => {
         (async () => {
@@ -44,22 +46,22 @@ const AdminModal = ({isVisible, onClose}) => {
         }
     }, [isModalVisible])
 
-    const booking = () => {
-      const admin = auth.currentUser;  
-            return db.collection('Menu3').add({
-            uid: admin.uid,
-            image: image,
-            category: selectedValue,
-            name: name,
-            price: price,
-        }).then(() => { 
-              setModalVisible(!isVisible);
-        })
-      .catch((error) => {
-        const errorMessage = error.message;
-        alert(errorMessage)
-      });
-    }
+    const UpdateRestaurant = () => {
+        const uid = auth?.currentUser?.uid;  
+        return db.collection('admin').doc(uid).update({
+        uid: uid,
+        image: image,
+        email: email,
+        name: name,
+        description: description,
+         }).then(() => { 
+      Alert.alert('Admin profile successfully updated')
+    })
+  .catch((error) => {
+   const errorMessage = error.message;
+    alert(errorMessage)
+  });
+}
 
     return (
       <Modal
@@ -98,42 +100,46 @@ const AdminModal = ({isVisible, onClose}) => {
               {/* {image && <Image source={{ uri: image }} />} */}
               </TouchableOpacity>
           </View>
-        <View style={styles.myPicker}>
-      <Picker style={{
-          height: 50,
-          width: 100,
-          backgroundColor: 'red'
-      }}
-        selectedValue={selectedValue}
-        style={{ height: 50, width: 150 }}
-        onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-      >
-        <Picker.Item label="Beverage" value="Beverage" />
-        <Picker.Item label="Seafood" value="Seafood" />
-        <Picker.Item label="Meat" value="Meat" />
-      </Picker>
-
-      <TextInput
-        style={styles.input}
-        onChangeText={name => setName(name)}
-        value={name}
-        placeholder="Item Name"
-        keyboardType="text"
-      />
-       <TextInput
-        style={styles.input}
-        onChangeText={price => setPrice(price)}
-        value={price}
-        placeholder="Enter Price"
-        keyboardType="numeric"
-      />
+        <View style={styles.myTextinput}>
+      
+        <View>
+           <TextInput 
+               placeholder="E-mail"
+               placeholderTextColor="#60594F"
+               style={styles.textInput}    
+               value={email}
+               onChangeText={text => setEmail(text)}  
+            ></TextInput>
+           </View>
+           <View>
+           <TextInput 
+               placeholder="Name"
+               placeholderTextColor="#60594F"
+               style={styles.textInput}    
+               value={name}
+               onChangeText={text => setName(text)}  
+            ></TextInput>
+           </View>
+           <View style={styles.MainContainer}>
+            <TextInput
+              style={styles.TextInputStyleClass}
+              onChangeText={description => setDescription(description)}
+              value={description}
+              underlineColorAndroid="transparent"
+              placeholder={"Enter the hotel description here."}
+              placeholderTextColor={"#9E9E9E"}
+              numberOfLines={10}
+              multiline={true}
+            />
+          </View>
+       
      </View>
 
       <View>
       <TouchableOpacity style={styles.myButton} 
-         onPress={booking}
+          onPress={UpdateRestaurant}
       >
-            <Text style={styles.btnText}>Add</Text>
+            <Text style={styles.btnText}>Update</Text>
       </TouchableOpacity>
       </View>
  
@@ -142,7 +148,7 @@ const AdminModal = ({isVisible, onClose}) => {
     )
 }
 
-export default AdminModal;
+export default UpdateUserProfile;
 
 const styles = StyleSheet.create({
     /* Other styles hidden to keep the example brief... */
@@ -180,7 +186,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         marginHorizontal: 50,
         marginLeft: 30,
-        marginTop: 250,
+        marginTop: 45
     },
 
     btnText: {
@@ -194,9 +200,54 @@ const styles = StyleSheet.create({
     image: {
         width: 120,
         height: 120,
-        borderRadius: 200,
+        borderRadius: 120,
         borderWidth: 2,
         backgroundColor: "cadetblue",
       },
+
+  inputContainer: {
+    backgroundColor: 'lightgrey',
+    width: 1.3,
+    padding: 8,
+    marginTop: 10,
+    borderRadius: 20,
+
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 1.3,
+},
+
+textInput: {
+    paddingLeft: 5,
+    marginBottom: 20,
+    borderBottomColor: '#e4ac6f',
+    borderBottomWidth: 1,
+    paddingBottom: 20,
+    justifyContent: 'space-between',
+    width: 200,
+    color: '#000',
+},
+
+myTextinput: {
+    marginTop: 18
+},
+
+
+    TextInputStyleClass:{
+        textAlign: 'center',
+         width: 220,
+         borderWidth: 1,
+         borderColor: '#e4ac6f',
+         borderRadius: 20 ,
+         backgroundColor : "#FFFFFF",
+         height: 100,
+         marginTop: 32
+         }
+
+   
 
   });

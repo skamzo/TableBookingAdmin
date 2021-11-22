@@ -5,10 +5,13 @@ import { SimpleLineIcons } from '@expo/vector-icons';
 //import { Avatar } from 'react-native-elements';
 import UpdateModal from "./UpdateModal";
 import * as ImagePicker from 'expo-image-picker';
+import UpdateUserProfile from "./UpdateUserProfile";
+import { MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons'; 
 
 const {height, width} = Dimensions.get('window');
 
-const ProfileScreen = ({navigation}) => {
+const ProfileScreen = ({navigation, item}) => {
 
   
   const [messages, setMessages] = useState([]);
@@ -48,24 +51,29 @@ const ProfileScreen = ({navigation}) => {
       return (
           <View style={{marginTop: 85}}>
 
-              <Image source={{uri:item.avatar}}/>
+              <Image source={{uri:item.image}} style={styles.image} value={image}/>
               <View >
-              <Text style={{fontSize: 18,  margin: 9}}>
+              <Text style={{fontSize: 18,  margin: 9,  color: '#000', marginTop: 50, marginHorizontal: 60}}>
                   <Text style={{fontWeight: 'bold', fontSize: 18}}>
            Email:
+           
         </Text> {item.email}
                   </Text>
-                  <Text style={{fontSize: 18, margin: 9}}>
-                  <Text style={{fontWeight: 'bold', fontSize: 18}}>
-           Restaurant Name:
-        </Text> {item.name}
+                  <Text style={{fontSize: 18, margin: 9, marginTop: 30, marginHorizontal: 54}}>
+                  <Text style={{fontWeight: 'bold', fontSize: 18}}>  
+                Restaurant:
+        </Text> {item.name} 
                   </Text>
                   <Text style={{fontSize: 18, margin: 9}}>
                   <Text style={{fontWeight: 'bold', fontSize: 18}}>
-              Image:    <Image style={styles.image} source={{uri: item.image}} value={image} style={{height: 100, width: 100}}/>
+              {/* Image:  <Image style={styles.image} source={{uri: item.image}} value={image} style={{height: 50, width: 50}}/> */}
                 
               </Text> 
                   </Text>
+                  <FontAwesome style={{marginHorizontal: 13, marginTop: -137}} name="user-circle-o" size={26} color="#2e64e5" />
+                  <View  style={{marginHorizontal: 13,  marginTop: 37}}>
+                  <MaterialIcons name="restaurant" size={26} color="#2e64e5" /> 
+                    </View>      
               </View>
        
           </View>
@@ -82,69 +90,39 @@ const ProfileScreen = ({navigation}) => {
     //     }
     // }
 
-    React.useEffect(() => {
-      (async () => {
-        if (Platform.OS !== 'web') {
-          const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-          if (status !== 'granted') {
-            alert('Sorry, we need camera roll permissions to make this work!');
-          }
-        }
-      })();
-    }, []);
-  
-    const PickImage = async () => {
-      let result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-  
-      console.log(result);
-  
-      if (!result.cancelled) {
-        setImage(result.uri);
-      }
-    };
-
     return (
       <View style={styles.container} >
-               <View style={{marginTop: 35, alignSelf: 'flex-end', height:194}}>
-               <TouchableOpacity style={{
-                    marginRight: 35
-                   }}
-                   onPress={signOut}
-                >
-                    <SimpleLineIcons name="logout" size={24}
-                     color="#000" />
-                </TouchableOpacity>
-               </View>
-            <View style={styles.footer} >
-            <TouchableOpacity style={{marginTop: -50}} onPress={PickImage}>
-              <Image style={styles.image} source={{uri: image}} value={image}/>
-              {/* {image && <Image source={{ uri: image }} />} */}
-              </TouchableOpacity>
-
-              <FlatList
+           <FlatList
                     style={styles.myFlatList}
                     data={users}
                     renderItem={({item})=> {return <RenderCard item={item} />}}
                     keyExtractor={(item) =>item.uid}
                 />
 
-         <View style={styles.myButton}>
-         {isModalVisible &&
-                <UpdateModal
+               <View style={{alignSelf: 'flex-end'}}>
+               <TouchableOpacity style={{
+                    marginRight: 30
+                   }}
+                   style={styles.userBtn1}
+                   onPress={signOut}
+                >
+             <Text style={styles.userBtnTxt1}>Log out</Text>
+                </TouchableOpacity>
+               </View>
+               <View>
+              {isModalVisible &&
+                <UpdateUserProfile
                    isVisible={isModalVisible}
                    onClose={() => setModalVisible(false)}
                 />
-               }   
-          <TouchableOpacity onPress={() => setModalVisible(true)} >
-             <Text style={styles.btnText}>Update Restaurant</Text>
-          </TouchableOpacity>
-          </View>  
-         </View>
+               } 
+          < TouchableOpacity
+                style={styles.userBtn}             
+                  onPress={() => setModalVisible(true)}
+                >
+                <Text style={styles.userBtnTxt}>Edit</Text>
+              </TouchableOpacity>
+              </View> 
        </View>  
  
     )
@@ -158,7 +136,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: '100%',
     width: "100%",
-    backgroundColor:'#67C8D5',
+    backgroundColor:'#f9f1dc',
     alignSelf: 'center'
   },
 
@@ -187,38 +165,14 @@ const styles = StyleSheet.create({
         shadowRadius: 1.3,
   },
 
-  containerIcon: {
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      marginTop: 20,
-      color: '#fff'
-  },
-
-  myButton: {
-      width: 220,
-      height: 70,
-      backgroundColor: '#255C69',
-      borderRadius: 40,
-      marginHorizontal: 50,
-      marginBottom: 37,
-      alignSelf: 'center'
-  },
-
-  btnText: {
-      color: 'white',
-      fontSize: 20,
-      justifyContent: "center",
-      textAlign: "center",
-      marginTop: 18,
-  },
-
   image: {
-    width: 170,
-    height: 170,
-    borderRadius: 200,
+    width: 175,
+    height: 150,
+    borderRadius: 50,
     borderWidth: 2,
     backgroundColor: "cadetblue",
-    marginTop: -50   
+    marginTop: 50,
+    alignSelf: 'center'
   },
 
   MainContainer :{
@@ -238,6 +192,35 @@ const styles = StyleSheet.create({
       backgroundColor : "#FFFFFF",
       height: 150,
       marginTop: 40
-      }
+      },
+
+      userBtn: {
+        borderColor: '#2e64e5',
+        borderWidth: 2,
+        borderRadius: 3,
+        paddingVertical: 8,
+        paddingHorizontal: 14,
+        marginHorizontal: 25,
+        marginBottom: 150,
+        width: 80
+      },
+      userBtnTxt: {
+        color: '#2e64e5',
+        textAlign: 'center'
+      },
+
+      userBtn1: {
+        borderColor: '#2e64e5',
+        borderWidth: 2,
+        borderRadius: 3,
+        paddingVertical: 8,
+        paddingHorizontal: 14,
+        marginHorizontal: 30,
+        marginBottom: -39,
+        width: 80
+      },
+      userBtnTxt1: {
+        color: '#2e64e5',
+      },
 
 })

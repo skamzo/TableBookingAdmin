@@ -26,7 +26,7 @@ const chicken = () => {
               style={{
                 flexDirection: 'row',
                 borderRadius: 15,
-                 backgroundColor: '#F2F2F2',
+                 backgroundColor: 'lightgrey',
                  ...containerStyle
               }}
           >
@@ -61,9 +61,9 @@ const chicken = () => {
                            }}
                            imageStyle={{
                             alignItems: 'center',
-                              marginLeft: 10,
                               height: 100,
-                              width: 100
+                              width: 100,
+                              borderRadius: 10
                            }}
                            item={item}
                       />                     
@@ -81,7 +81,7 @@ export default chicken
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#e4ac6f',
     alignItems: 'center',
     justifyContent: 'center',
   },

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Image, Picker, TouchableOpacity, Button, TextInput, Modal, Dimensions} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { db, auth } from '../firebase/firebase';
+import { db, auth, storageRef, fb } from '../firebase/firebase';
 
 const AdminModal = ({isVisible, onClose}) => {
 
@@ -31,10 +31,35 @@ const AdminModal = ({isVisible, onClose}) => {
           quality: 1,
         });
     
-        console.log(result);
+        console.log(result.uri);
     
         if (!result.cancelled) {
-          setImage(result.uri);
+          //setImage(result.uri);
+          const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function () {
+              resolve(xhr.response);
+            };
+            xhr.onerror = function () {
+              reject(new TypeError("Network request failed!"));
+            };
+            xhr.responseType = "blob";
+            xhr.open("GET", result.uri, true);
+            xhr.send(null);
+          });
+      
+          const ref = storageRef.child(new Date().toISOString());
+          const snapshot = (await ref.put(blob)).ref
+            .getDownloadURL()
+            .then((imageUrl) => {
+              setImage(imageUrl);
+              console.log(
+                imageUrl,
+                "this is setting the image too storage before 3"
+              );
+      
+              blob.close();
+            });
         }
       };
    
@@ -46,7 +71,7 @@ const AdminModal = ({isVisible, onClose}) => {
 
     const booking = () => {
       const admin = auth.currentUser;  
-            return db.collection('Menu3').add({
+            return db.collection('Menu').add({
             uid: admin.uid,
             image: image,
             category: selectedValue,

@@ -8,6 +8,7 @@ import * as ImagePicker from 'expo-image-picker';
 import UpdateUserProfile from "./UpdateUserProfile";
 import { MaterialIcons } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons'; 
+import { FontAwesome5 } from "@expo/vector-icons"
 
 const {height, width} = Dimensions.get('window');
 
@@ -111,7 +112,7 @@ const ProfileScreen = ({navigation, item}) => {
                </View>
                <View>
               {isModalVisible &&
-                <UpdateUserProfile
+                <UpdateModal
                    isVisible={isModalVisible}
                    onClose={() => setModalVisible(false)}
                 />
@@ -123,6 +124,30 @@ const ProfileScreen = ({navigation, item}) => {
                 <Text style={styles.userBtnTxt}>Edit</Text>
               </TouchableOpacity>
               </View> 
+              <View style={styles.bottomBar}>
+             <View style={styles.containerIcon}>
+             <View>
+                <FontAwesome5 style= {{
+                    
+              }} name='home' size={23} color={'#fff'}
+              onPress={() => navigation.navigate('HomeScreen')}
+               />
+             </View>
+             {/* <View>
+                <FontAwesome5 style= {{
+             
+              }} name='book' size={20} color={'#fff'} />
+             </View> */}
+             <View>
+                <FontAwesome5 style= {{
+              
+              }} name='user-alt' size={23} color={'#fff'}
+                onPress={() => navigation.navigate('ProfileScreen')}
+              />
+
+             </View>
+             </View>
+         </View>
        </View>  
  
     )
@@ -201,7 +226,7 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         paddingHorizontal: 14,
         marginHorizontal: 25,
-        marginBottom: 150,
+        marginBottom: 10,
         width: 80
       },
       userBtnTxt: {
@@ -222,5 +247,22 @@ const styles = StyleSheet.create({
       userBtnTxt1: {
         color: '#2e64e5',
       },
+
+      bottomBar: {
+        height: height * 0.08,
+        width: '100%',
+        backgroundColor: '#255E69',
+        borderTopLeftRadius: 50,
+        borderTopRightRadius: 50,
+        marginTop: 112
+    },
+
+    containerIcon: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: 20,
+        color: '#fff',
+        marginHorizontal: 30
+    },
 
 })

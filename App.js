@@ -12,6 +12,7 @@ import { auth } from './firebase/firebase';
 import beef from './menu1/beef';
 import chicken from './menu1/chicken';
 import pork from './menu1/pork';
+import StatusPage from './screens/StatusPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -64,6 +65,7 @@ const App = () => {
       <Stack.Screen options={{headerShown: false}} name="beef" component={beef} />
       <Stack.Screen options={{headerShown: false}} name="chicken" component={chicken} />
       <Stack.Screen options={{headerShown: false}} name="pork" component={pork} />
+      <Stack.Screen options={{headerShown: false}} name="StatusPage" component={StatusPage} />
       </>
       :
       <>

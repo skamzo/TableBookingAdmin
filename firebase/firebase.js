@@ -28,5 +28,8 @@ if (firebase.apps.length === 0) {
 
 const auth = firebase.auth();
 const db = app.firestore();
+const storageRef = firebase.storage().ref();
 
-export { auth, db };
+const fb = firebase.storage.TaskEvent.STATE_CHANGED;
+
+export { auth, db, storageRef, fb };
